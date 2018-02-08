@@ -24,7 +24,20 @@ func InstallDatabase() {
 	preference := &Preference{}
 	hasTable = db.HasTable(preference)
 	if !hasTable {
-		createPreference := "CREATE TABLE `compass10_preference` (`uuid` char(36) NOT NULL,`name` varchar(45) DEFAULT NULL COMMENT '网站名称',`logo_url` varchar(255) DEFAULT NULL,`favicon_url` varchar(255) DEFAULT NULL,`footer_line1` varchar(1024) DEFAULT NULL,`footer_line2` varchar(1024) DEFAULT NULL,`version` varchar(45) DEFAULT NULL,`sort` bigint(20) DEFAULT NULL,`modify_time` timestamp NULL DEFAULT NULL,`create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',PRIMARY KEY (`uuid`),UNIQUE KEY `id_UNIQUE` (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='网站偏好设置表';"
+		createPreference := "CREATE TABLE `compass10_preference` (\n" +
+			"  `uuid` char(36) NOT NULL,\n" +
+			"  `name` varchar(45) DEFAULT NULL COMMENT '网站名称',\n" +
+			"  `logo_url` varchar(255) DEFAULT NULL,\n" +
+			"  `favicon_url` varchar(255) DEFAULT NULL,\n" +
+			"  `footer_line1` varchar(1024) DEFAULT NULL,\n" +
+			"  `footer_line2` varchar(1024) DEFAULT NULL,\n" +
+			"  `version` varchar(45) DEFAULT NULL,\n" +
+			"  `sort` bigint(20) DEFAULT NULL,\n" +
+			"  `modify_time` timestamp NULL DEFAULT NULL,\n" +
+			"  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',\n" +
+			"  PRIMARY KEY (`uuid`),\n" +
+			"  UNIQUE KEY `id_UNIQUE` (`uuid`)\n" +
+			") ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='网站偏好设置表';"
 		db = db.Exec(createPreference)
 		if db.Error != nil {
 			LogPanic(db.Error)
@@ -87,5 +100,24 @@ func InstallDatabase() {
 		db.Create(user)
 
 	}
+
+
+
+	/*
+	"\tCREATE TABLE `compass10_site` (\n" +
+		"\t\t`uuid` char(36) NOT NULL,\n" +
+		"\t\t`user_uuid` char(36) NOT NULL,\n" +
+		"\t\t`name` varchar(45) DEFAULT NULL,\n" +
+		"\t\t`favicon_tank_uuid` char(36) DEFAULT NULL,\n" +
+		"\t\t`favicon_url` varchar(255) DEFAULT NULL,\n" +
+		"\t\t`url` varchar(255) DEFAULT NULL,\n" +
+		"\t\t`hit` varchar(45) DEFAULT NULL,\n" +
+		"\t\t`sort` bigint(20) DEFAULT NULL,\n" +
+		"\t\t`modify_time` timestamp NULL DEFAULT NULL,\n" +
+		"\t\t`create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',\n" +
+		"\tPRIMARY KEY (`uuid`),\n" +
+		"\t\tUNIQUE KEY `id_UNIQUE` (`uuid`)\n" +
+		"\t) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='站点表'"
+	*/
 
 }
