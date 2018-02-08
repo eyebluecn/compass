@@ -1,0 +1,27 @@
+# 蓝眼导航
+
+## 注意事项
+每次版本升级时需要修改以下内容。
+
+1. build/pack/build.bat
+    set VERSION_NAME=compass-x.x.x
+
+2. build/pack/build.sh
+    VERSION_NAME=compass-x.x.x
+
+3. rest/config.go
+    VERSION = x.x.x
+
+4. compass-front 修改 vuex/index.js
+    versionName: 'x.x.x'
+
+5. docker-compose 修改 eyeblue/compass:1.0.2
+    eyeblue/compass:x.x.x
+
+6. readme.md 修改 eyeblue/compass:1.0.2
+    eyeblue/compass:x.x.x
+
+
+2018-xx-xx
+compass-1.0.0
+敬请期待...

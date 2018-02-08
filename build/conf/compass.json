@@ -1,0 +1,14 @@
+{
+  "ServerPort": 6030,
+  "LogToConsole": false,
+  "LogPath": "",
+  "MatterPath": "",
+  "MysqlPort": 3306,
+  "MysqlHost": "127.0.0.1",
+  "MysqlSchema": "compass",
+  "MysqlUsername": "compass",
+  "MysqlPassword": "compass123",
+  "AdminUsername": "admin",
+  "AdminEmail": "admin@compass.eyeblue.cn",
+  "AdminPassword": "123456"
+}
