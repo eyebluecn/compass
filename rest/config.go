@@ -49,13 +49,13 @@ var (
 		//数据库端口
 		MysqlPort: 3306,
 		//数据库Host
-		MysqlHost: "127.0.0.1",
+		MysqlHost: "compass.eyeblue.cn",
 		//数据库名字
-		MysqlSchema: "compass",
+		MysqlSchema: "compass_dev",
 		//用户名
-		MysqlUsername: "compass",
+		MysqlUsername: "compass_dev",
 		//密码
-		MysqlPassword: "compass123",
+		MysqlPassword: "Compass_dev_123",
 		//数据库连接信息。这一项是上面几项组合而得，不可直接配置。
 		MysqlUrl: "%MysqlUsername:%MysqlPassword@tcp(%MysqlHost:%MysqlPort)/%MysqlSchema?charset=utf8&parseTime=True&loc=Local",
 		//超级管理员用户名，只能包含英文和数字
