@@ -43,8 +43,6 @@ var (
 		LogToConsole: true,
 		//日志的保存路径，如果没有指定，默认在根目录下的log文件夹中
 		LogPath: "",
-		//上传的文件路径，如果没有指定，默认在根目录下的matter文件夹中
-		MatterPath: "",
 		//mysql相关配置。
 		//数据库端口
 		MysqlPort: 3306,
@@ -58,6 +56,16 @@ var (
 		MysqlPassword: "Compass_dev_123",
 		//数据库连接信息。这一项是上面几项组合而得，不可直接配置。
 		MysqlUrl: "%MysqlUsername:%MysqlPassword@tcp(%MysqlHost:%MysqlPort)/%MysqlSchema?charset=utf8&parseTime=True&loc=Local",
+
+		//蓝眼云盘配置项
+		//蓝眼云盘访问地址，要求是一个通过公网就能访问到的地址
+		TankUrl: "https://tank.eyeblue.cn",
+		//蓝眼云盘登录用的邮箱
+		TankEmail: "campass_dev@tank.eyeblue.cn",
+		//蓝眼云盘登录用的密码
+		TankPassword: "123456",
+
+
 		//超级管理员用户名，只能包含英文和数字
 		AdminUsername: "admin",
 		//超级管理员邮箱
@@ -77,8 +85,6 @@ type Config struct {
 
 	//日志的保存路径，要求不以/结尾。如果没有指定，默认在根目录下的log文件夹中。eg: /var/log/compass
 	LogPath string
-	//上传的文件路径，要求不以/结尾。如果没有指定，默认在根目录下的matter文件夹中。eg: /var/www/matter
-	MatterPath string
 
 	//mysql相关配置。
 	//数据库端口
@@ -93,6 +99,14 @@ type Config struct {
 	MysqlPassword string
 	//数据库连接信息。
 	MysqlUrl string
+
+	//蓝眼云盘配置项
+	//蓝眼云盘访问地址，要求是一个通过公网就能访问到的地址
+	TankUrl string
+	//蓝眼云盘登录用的邮箱
+	TankEmail string
+	//蓝眼云盘登录用的密码
+	TankPassword string
 
 	//超级管理员用户名，只能包含英文和数字
 	AdminUsername string
@@ -189,11 +203,6 @@ func LoadConfigFromEnvironment() {
 		CONFIG.LogPath = tmpLogPath
 	}
 
-	tmpMatterPath := os.Getenv("TANK_MATTER_PATH")
-	if tmpMatterPath != "" {
-		CONFIG.MatterPath = tmpMatterPath
-	}
-
 	tmpMysqlPort := os.Getenv("TANK_MYSQL_PORT")
 	if tmpMysqlPort != "" {
 		i, e := strconv.Atoi(tmpMysqlPort)
@@ -247,7 +256,6 @@ func LoadConfigFromArguments() {
 
 	//日志和上传文件的路径
 	LogPathPtr := flag.String("LogPath", CONFIG.LogPath, "log path")
-	MatterPathPtr := flag.String("MatterPath", CONFIG.MatterPath, "matter path")
 
 	//mysql相关配置。
 	MysqlPortPtr := flag.Int("MysqlPort", CONFIG.MysqlPort, "mysql port")
@@ -274,10 +282,6 @@ func LoadConfigFromArguments() {
 
 	if *LogPathPtr != CONFIG.LogPath {
 		CONFIG.LogPath = *LogPathPtr
-	}
-
-	if *MatterPathPtr != CONFIG.MatterPath {
-		CONFIG.MatterPath = *MatterPathPtr
 	}
 
 	if *MysqlPortPtr != CONFIG.MysqlPort {
@@ -331,10 +335,6 @@ func PrepareConfigs() {
 		CONFIG.LogPath = GetHomePath() + "/log"
 	}
 	MakeDirAll(CONFIG.LogPath)
-	if CONFIG.MatterPath == "" {
-		CONFIG.MatterPath = GetHomePath() + "/matter"
-	}
-	MakeDirAll(CONFIG.MatterPath)
 
 	//验证配置项的正确性
 	CONFIG.validate()
