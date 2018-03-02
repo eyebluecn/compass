@@ -101,6 +101,11 @@ func (this *Context) registerBeans() {
 	//session
 	this.registerBean(new(SessionDao))
 
+	//tank
+	this.registerBean(new(TankController))
+	this.registerBean(new(TankDao))
+	this.registerBean(new(TankService))
+
 	//user
 	this.registerBean(new(UserController))
 	this.registerBean(new(UserDao))

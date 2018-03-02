@@ -1,9 +1,7 @@
 package rest
 
 import (
-	"fmt"
 	"os"
-	"time"
 	"path/filepath"
 )
 
@@ -88,29 +86,3 @@ func GetConfPath() string {
 	return filePath
 }
 
-//获取某个用户文件应该存放的位置。这个是相对GetFilePath的路径
-//例如：/zicla/2006-01-02/1510122428000
-func GetUserFilePath(username string) (string, string) {
-
-	now := time.Now()
-	datePath := now.Format("2006-01-02")
-	//毫秒时间戳
-	timestamp := now.UnixNano() / 1e6
-
-	filePath := CONFIG.MatterPath
-	absolutePath := fmt.Sprintf("%s/%s/%s/%d", filePath, username, datePath, timestamp)
-	relativePath := fmt.Sprintf("/%s/%s/%d", username, datePath, timestamp)
-
-	exists, err := PathExists(absolutePath)
-	if err != nil {
-		panic("判断上传文件是否存在时出错！")
-	}
-	if !exists {
-		err = os.MkdirAll(absolutePath, 0777)
-		if err != nil {
-			panic("创建上传文件夹时出错！")
-		}
-	}
-
-	return absolutePath, relativePath
-}

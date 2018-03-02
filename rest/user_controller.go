@@ -203,6 +203,9 @@ func (this *UserController) Edit(writer http.ResponseWriter, request *http.Reque
 func (this *UserController) Detail(writer http.ResponseWriter, request *http.Request) *WebResult {
 
 	uuid := request.FormValue("uuid")
+	if uuid == "" {
+		panic("uuid参数必填")
+	}
 
 	user := this.userDao.CheckByUuid(uuid)
 
