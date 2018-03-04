@@ -10,6 +10,10 @@ type Tank struct {
 	Url        string `json:"url"`
 	Remark     string `json:"remark"`
 	Confirmed  bool   `json:"confirmed"`
+	//用于上传的uploadToken.
+	UploadTokenUuid int `gorm:"-" json:"uploadTokenUuid"`
+	//客户端需要将文件上传到何处去。
+	UploadUrl int `gorm:"-" json:"uploadUrl"`
 }
 
 // set File's table name to be `profiles`
