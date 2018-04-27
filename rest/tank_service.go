@@ -1,44 +1,16 @@
 package rest
 
 import (
-	"time"
 	"fmt"
-	"net/http"
-	"net/url"
-	"bytes"
-	"strconv"
-	"io/ioutil"
-	"encoding/json"
+	"time"
+	"github.com/json-iterator/go"
 )
 
-const URL_FETCH_UPLOAD_TOKEN = "/api/alien/fetch/upload/token"
-const URL_FETCH_DOWNLOAD_TOKEN = "/api/alien/fetch/download/token"
-const URL_CONFIRM = "/api/alien/confirm"
-const URL_UPLOAD = "/api/alien/upload"
-const URL_DOWNLOAD = "/api/alien/download"
 
 //@Service
 type TankService struct {
 	Bean
 	tankDao *TankDao
-}
-
-type UploadToken struct {
-	Base
-	UserUuid   string    `json:"userUuid"`
-	FolderUuid string    `json:"folderUuid"`
-	MatterUuid string    `json:"matterUuid"`
-	ExpireTime time.Time `json:"expireTime"`
-	Filename   string    `json:"filename"`
-	Privacy    bool      `json:"privacy"`
-	Size       int64     `json:"size"`
-	Ip         string    `json:"ip"`
-}
-
-type WebResultUploadToken struct {
-	Code int          `json:"code"`
-	Msg  string       `json:"msg"`
-	Data *UploadToken `json:"data"`
 }
 
 //初始化方法
@@ -52,59 +24,54 @@ func (this *TankService) Init(context *Context) {
 
 }
 
-//在tank服务器上存放的文件路径规则如下： /app/compass/yyyy/MM/dd/timestamp
+//我们存放在tank服务器的文件资源按照如下的命名规则： /app/blog/yyyy/MM/dd/timestamp
 func (this *TankService) getStoreDir() string {
 
 	now := time.Now()
-	datePath := now.Format("/2006/01/02")
-	return fmt.Sprintf("/app/compass"+datePath+"/%d", time.Now().UnixNano())
+	dateString := now.Format("/2006/01/02")
+
+	timestamp := int64(now.UnixNano() / (1000 * 1000))
+	return fmt.Sprintf("/app/compass%s/%d", dateString, timestamp)
+
 }
 
-//去远程获取uploadToken
-func (this *TankService) HttpFetchUploadToken(filename string, privacy bool, size int64) *Tank {
-
-	//生成client 参数为默认
-	client := &http.Client{}
+//去tank服务器请求一个tank的信息回来。
+func (this *TankService) HttpFetchUploadToken(filename string, privacy bool, size int64) *TankUploadToken {
 
 	//生成要访问的url
-	requestUrl := CONFIG.TankUrl + URL_FETCH_UPLOAD_TOKEN
+	url := fmt.Sprintf("%s%s",
+		CONFIG.TankUrl,
+		"/api/alien/fetch/upload/token")
+	params := make(map[string]string)
+	params["email"] = CONFIG.TankEmail
+	params["password"] = CONFIG.TankPassword
+	params["filename"] = filename
+	params["privacy"] = fmt.Sprintf("%t", privacy)
+	params["size"] = fmt.Sprintf("%d", size)
+	params["dir"] = this.getStoreDir()
 
-	data := url.Values{}
-	data.Set("email", CONFIG.TankEmail)
-	data.Set("password", CONFIG.TankPassword)
-	data.Set("filename", filename)
-	data.Set("privacy", strconv.FormatBool(privacy))
-	data.Set("size", strconv.FormatInt(size, 10));
-	data.Set("dir", this.getStoreDir());
+	bytes := HttpPost(url, params)
 
-	//提交请求
-	reqest, err := http.NewRequest("POST", requestUrl, bytes.NewBufferString(data.Encode()))
-	this.PanicError(err)
+	//用json的方式输出返回值。
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	result := &WebResult{}
+	err := json.Unmarshal(bytes, result)
+	if err != nil {
+		panic(err)
+	}
 
-	reqest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	reqest.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+	data := result.Data
+	dataJson, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
 
-	//处理返回结果
-	response, err := client.Do(reqest)
-	this.PanicError(err)
 
-	bs, err := ioutil.ReadAll(response.Body)
-	this.PanicError(err)
+	tankUploadToken := &TankUploadToken{}
+	err = json.Unmarshal(dataJson, tankUploadToken)
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println(string(bs))
-
-	webResult := new(WebResultUploadToken)
-	err = json.Unmarshal(bs, webResult)
-	this.PanicError(err)
-
-	//将结果定位到标准输出 也可以直接打印出来 或者定位到其他地方进行相应的处理
-	//stdout := os.Stdout
-	//_, err = io.Copy(stdout, response.Body)
-
-	//返回的状态码
-	//status := response.StatusCode
-
-	//fmt.Println(status)
-
-	return &Tank{}
+	return tankUploadToken;
 }

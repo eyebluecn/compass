@@ -3,6 +3,8 @@ package rest
 import (
 	"net/http"
 	"strconv"
+	"regexp"
+	"fmt"
 )
 
 type TankController struct {
@@ -35,46 +37,11 @@ func (this *TankController) RegisterRoutes() map[string]func(writer http.Respons
 
 	//每个Controller需要主动注册自己的路由。
 	routeMap["/api/tank/edit"] = this.Wrap(this.Edit, USER_ROLE_ADMINISTRATOR)
-	routeMap["/api/tank/fetch/upload/token"] = this.Wrap(this.FetchUploadToken, USER_ROLE_USER)
 	routeMap["/api/tank/detail"] = this.Wrap(this.Detail, USER_ROLE_USER)
+	//获取上传token.
+	routeMap["/api/tank/fetch/upload/token"] = this.Wrap(this.FetchUploadToken, USER_ROLE_USER)
+
 	return routeMap
-}
-
-//获取上传的token
-func (this *TankController) FetchUploadToken(writer http.ResponseWriter, request *http.Request) *WebResult {
-
-	//验证参数。
-	filename := request.FormValue("filename")
-	if filename == "" {
-		panic("filename参数必填")
-	}
-
-	//私有性
-	privacyStr := request.FormValue("privacy")
-	privacy := false
-	if privacyStr == "true" {
-		privacy = true
-	}
-
-	//文件大小
-	sizeStr := request.FormValue("size")
-	var size int64
-	if sizeStr == "" {
-		panic(`文件大小必填`)
-	} else {
-		var err error
-		size, err = strconv.ParseInt(sizeStr, 10, 64)
-		if err != nil {
-			panic(`文件大小不符合规范`)
-		}
-		if size < 1 {
-			panic(`文件大小不符合规范`)
-		}
-	}
-
-	tank := this.tankService.HttpFetchUploadToken(filename, privacy, size)
-
-	return this.Success(tank)
 }
 
 //修改
@@ -100,5 +67,55 @@ func (this *TankController) Detail(writer http.ResponseWriter, request *http.Req
 	tank := this.tankDao.CheckByUuid(uuid)
 
 	return this.Success(tank)
+
+}
+
+//获取上传token
+func (this *TankController) FetchUploadToken(writer http.ResponseWriter, request *http.Request) *WebResult {
+
+	//文件名。
+	filename := request.FormValue("filename")
+	if filename == "" {
+		panic("文件名必填")
+	} else if m, _ := regexp.MatchString(`[<>|*?/\\]`, filename); m {
+		panic(fmt.Sprintf(`【%s】不符合要求，文件名中不能包含以下特殊符号：< > | * ? / \`, filename))
+	}
+
+	//文件公有或私有
+	privacyStr := request.FormValue("privacy")
+	var privacy bool
+	if privacyStr == "" {
+		panic(`文件公有性必填`)
+	} else {
+		if privacyStr == "true" {
+			privacy = true
+		} else if privacyStr == "false" {
+			privacy = false
+		} else {
+			panic(`文件公有性不符合规范`)
+		}
+	}
+
+	//文件大小
+	sizeStr := request.FormValue("size")
+	var size int64
+	if sizeStr == "" {
+		panic(`文件大小必填`)
+	} else {
+
+		var err error
+		size, err = strconv.ParseInt(sizeStr, 10, 64)
+		if err != nil {
+			panic(`文件大小不符合规范`)
+		}
+		if size < 1 {
+			panic(`文件大小不符合规范`)
+		}
+	}
+
+	tankUploadToken := this.tankService.HttpFetchUploadToken(filename, privacy, size)
+
+
+	return this.Success(tankUploadToken)
 
 }
