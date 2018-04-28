@@ -30,6 +30,24 @@ func (this *TankController) Init(context *Context) {
 
 }
 
+//处理一些特殊的接口，比如参数包含在路径中,一般情况下，controller不将参数放在url路径中
+func (this *TankController) HandleRoutes(writer http.ResponseWriter, request *http.Request) (func(writer http.ResponseWriter, request *http.Request), bool) {
+
+	path := request.URL.Path
+
+	//匹配 /api/tank/download/{uuid}
+	reg := regexp.MustCompile(`^/api/tank/download/([^/]+)$`)
+	strs := reg.FindStringSubmatch(path)
+	if len(strs) != 2 {
+		return nil, false
+	} else {
+		var f = func(writer http.ResponseWriter, request *http.Request) {
+			this.Download(writer, request, strs[1])
+		}
+		return f, true
+	}
+}
+
 //注册自己的路由。
 func (this *TankController) RegisterRoutes() map[string]func(writer http.ResponseWriter, request *http.Request) {
 
@@ -73,6 +91,8 @@ func (this *TankController) Detail(writer http.ResponseWriter, request *http.Req
 //获取上传token
 func (this *TankController) FetchUploadToken(writer http.ResponseWriter, request *http.Request) *WebResult {
 
+	operator := this.checkUser(writer, request)
+
 	//文件名。
 	filename := request.FormValue("filename")
 	if filename == "" {
@@ -113,9 +133,39 @@ func (this *TankController) FetchUploadToken(writer http.ResponseWriter, request
 		}
 	}
 
-	tankUploadToken := this.tankService.HttpFetchUploadToken(filename, privacy, size)
+	tank := this.tankService.HttpFetchUploadToken(filename, privacy, size, operator)
 
+	return this.Success(tank)
 
-	return this.Success(tankUploadToken)
+}
+
+//获取上传token
+func (this *TankController) Confirm(writer http.ResponseWriter, request *http.Request) *WebResult {
+
+	//验证参数。
+	uuid := request.FormValue("uuid")
+	if uuid == "" {
+		panic("uuid参数必填")
+	}
+
+	//验证参数。
+	matterUuid := request.FormValue("matterUuid")
+	if matterUuid == "" {
+		panic("matterUuid参数必填")
+	}
+
+	tank := this.tankService.HttpConfirm(uuid, matterUuid)
+
+	return this.Success(tank)
+
+}
+
+//下载
+func (this *TankController) Download(writer http.ResponseWriter, request *http.Request, uuid string) {
+
+	downloadUrl := this.tankService.HttpFetchDownloadUrl(uuid)
+
+	http.Redirect(writer, request, downloadUrl, http.StatusSeeOther)
+
 
 }
