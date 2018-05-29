@@ -94,7 +94,6 @@ func InstallDatabase() {
 		user.Email = CONFIG.AdminEmail
 		user.Phone = ""
 		user.Gender = USER_GENDER_UNKNOWN
-		user.SizeLimit = -1
 		user.Status = USER_STATUS_OK
 
 		db.Create(user)

@@ -116,19 +116,6 @@ func (this *UserController) Create(writer http.ResponseWriter, request *http.Req
 	role := request.FormValue("role")
 	city := request.FormValue("city")
 
-	//判断用户上传大小限制。
-	sizeLimitStr := request.FormValue("sizeLimit")
-	var sizeLimit int64 = 0
-	if sizeLimitStr == "" {
-		panic("用户上传限制必填！")
-	} else {
-		intsizeLimit, err := strconv.Atoi(sizeLimitStr)
-		if err != nil {
-			this.PanicError(err)
-		}
-		sizeLimit = int64(intsizeLimit)
-	}
-
 	//判断重名。
 	if this.userDao.CountByUsername(username) > 0 {
 		panic(username + "已经被其他用户占用。")
@@ -147,7 +134,6 @@ func (this *UserController) Create(writer http.ResponseWriter, request *http.Req
 		Gender:    gender,
 		City:      city,
 		AvatarUrl: avatarUrl,
-		SizeLimit: sizeLimit,
 		Status:    USER_STATUS_OK,
 	}
 
@@ -165,29 +151,8 @@ func (this *UserController) Edit(writer http.ResponseWriter, request *http.Reque
 	gender := request.FormValue("gender")
 	city := request.FormValue("city")
 
-	currentUser := this.checkUser(writer, request)
 	user := this.userDao.CheckByUuid(uuid)
 
-	if currentUser.Role == USER_ROLE_ADMINISTRATOR {
-		//只有管理员可以改变用户上传的大小
-		//判断用户上传大小限制。
-		sizeLimitStr := request.FormValue("sizeLimit")
-		var sizeLimit int64 = 0
-		if sizeLimitStr == "" {
-			panic("用户上传限制必填！")
-		} else {
-			intsizeLimit, err := strconv.Atoi(sizeLimitStr)
-			if err != nil {
-				this.PanicError(err)
-			}
-			sizeLimit = int64(intsizeLimit)
-		}
-		user.SizeLimit = sizeLimit
-	} else {
-		if currentUser.Uuid != uuid {
-			return this.Error(RESULT_CODE_UNAUTHORIZED)
-		}
-	}
 
 	user.AvatarUrl = avatarUrl
 	user.Phone = phone

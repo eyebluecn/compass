@@ -38,7 +38,6 @@ type User struct {
 	AvatarUrl string    `json:"avatarUrl"`
 	LastIp    string    `json:"lastIp"`
 	LastTime  time.Time `json:"lastTime"`
-	SizeLimit int64     `json:"sizeLimit"`
 	Status    string    `json:"status"`
 }
 
