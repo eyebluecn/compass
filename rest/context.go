@@ -110,6 +110,11 @@ func (this *Context) registerBeans() {
 	this.registerBean(new(UserController))
 	this.registerBean(new(UserDao))
 
+	//site
+	this.registerBean(new(SiteController))
+	this.registerBean(new(SiteDao))
+	this.registerBean(new(SiteService))
+
 }
 
 //从Map中获取某个Bean.
