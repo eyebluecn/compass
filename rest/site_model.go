@@ -7,7 +7,7 @@ type Site struct {
 	FaviconTankUuid string `json:"faviconTankUuid"`
 	FaviconUrl      string `json:"faviconUrl"`
 	Url             string `json:"url"`
-	Hit             string `json:"hit"`
+	Hit             int64  `json:"hit"`
 	FaviconTank     *Tank  `gorm:"-" json:"faviconTank"`
 }
 

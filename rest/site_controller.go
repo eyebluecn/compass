@@ -56,9 +56,12 @@ func (this *SiteController) Create(writer http.ResponseWriter, request *http.Req
 		panic(`链接必填`)
 	}
 
+	user := this.checkUser(writer, request)
+
 	site := &Site{
-		Name: name,
-		Url:  url,
+		UserUuid: user.Uuid,
+		Name:     name,
+		Url:      url,
 	}
 
 	site = this.siteDao.Create(site)
@@ -74,7 +77,7 @@ func (this *SiteController) Delete(writer http.ResponseWriter, request *http.Req
 		return this.Error("文件的uuid必填")
 	}
 
-	site := this.siteDao.FindByUuid(uuid)
+	site := this.siteDao.CheckByUuid(uuid)
 
 	//判断文件的所属人是否正确
 	user := this.checkUser(writer, request)
