@@ -52,16 +52,33 @@ func (this *SiteDao) CheckByUuid(uuid string) *Site {
 }
 
 //显示站点列表。
-func (this *SiteDao) Page(page int, pageSize int, name string, url string, sortArray []OrderPair) *Pager {
+func (this *SiteDao) Page(page int, pageSize int, userUuid string, name string, url string, visible string, sortArray []OrderPair) *Pager {
 
 	var wp = &WherePair{}
+
+	if userUuid != "" {
+		wp = wp.And(&WherePair{Query: "user_uuid = ?", Args: []interface{}{userUuid}})
+	}
 
 	if name != "" {
 		wp = wp.And(&WherePair{Query: "name LIKE ?", Args: []interface{}{"%" + name + "%"}})
 	}
 
 	if url != "" {
-		wp = wp.And(&WherePair{Query: "email LIKE ?", Args: []interface{}{"%" + url + "%"}})
+		wp = wp.And(&WherePair{Query: "url LIKE ?", Args: []interface{}{"%" + url + "%"}})
+	}
+
+	if visible != "" {
+		tmp := 0
+		if (visible == "true") {
+			tmp = 1
+		} else if (visible == "false") {
+			tmp = 0
+		} else {
+			panic("visible为bool类型，格式错误。")
+		}
+
+		wp = wp.And(&WherePair{Query: "visible = ?", Args: []interface{}{tmp}})
 	}
 
 	count := 0

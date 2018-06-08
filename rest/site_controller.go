@@ -62,6 +62,7 @@ func (this *SiteController) Create(writer http.ResponseWriter, request *http.Req
 		UserUuid: user.Uuid,
 		Name:     name,
 		Url:      url,
+		Visible:  true,
 	}
 
 	site = this.siteDao.Create(site)
@@ -136,10 +137,13 @@ func (this *SiteController) Page(writer http.ResponseWriter, request *http.Reque
 	pageStr := request.FormValue("page")
 	pageSizeStr := request.FormValue("pageSize")
 
+	userUuid := request.FormValue("userUuid")
 	name := request.FormValue("name")
 	url := request.FormValue("url")
+	visibleStr := request.FormValue("visible")
 
 	orderCreateTime := request.FormValue("orderCreateTime")
+	orderModifyTime := request.FormValue("orderModifyTime")
 
 	var page int
 	if pageStr != "" {
@@ -159,9 +163,13 @@ func (this *SiteController) Page(writer http.ResponseWriter, request *http.Reque
 			key:   "create_time",
 			value: orderCreateTime,
 		},
+		{
+			key:   "modify_time",
+			value: orderModifyTime,
+		},
 	}
 
-	pager := this.siteDao.Page(page, pageSize, name, url, sortArray)
+	pager := this.siteDao.Page(page, pageSize, userUuid, name, url, visibleStr, sortArray)
 
 	return this.Success(pager)
 }
