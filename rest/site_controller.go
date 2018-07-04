@@ -142,6 +142,7 @@ func (this *SiteController) Page(writer http.ResponseWriter, request *http.Reque
 	url := request.FormValue("url")
 	visibleStr := request.FormValue("visible")
 
+	orderSort := request.FormValue("orderSort")
 	orderCreateTime := request.FormValue("orderCreateTime")
 	orderModifyTime := request.FormValue("orderModifyTime")
 
@@ -166,6 +167,10 @@ func (this *SiteController) Page(writer http.ResponseWriter, request *http.Reque
 		{
 			key:   "modify_time",
 			value: orderModifyTime,
+		},
+		{
+			key:   "sort",
+			value: orderSort,
 		},
 	}
 
