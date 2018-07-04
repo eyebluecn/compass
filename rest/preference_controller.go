@@ -34,7 +34,7 @@ func (this *PreferenceController) RegisterRoutes() map[string]func(writer http.R
 
 	//每个Controller需要主动注册自己的路由。
 	routeMap["/api/preference/fetch"] = this.Wrap(this.Fetch, USER_ROLE_GUEST)
-	routeMap["/api/preference/edit"] = this.Wrap(this.Edit, USER_ROLE_ADMINISTRATOR)
+	routeMap["/api/preference/edit"] = this.Wrap(this.Edit, USER_ROLE_ADMIN)
 	return routeMap
 }
 

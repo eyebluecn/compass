@@ -23,16 +23,16 @@ func (this *UserController) RegisterRoutes() map[string]func(writer http.Respons
 	routeMap := make(map[string]func(writer http.ResponseWriter, request *http.Request))
 
 	//每个Controller需要主动注册自己的路由。
-	routeMap["/api/user/create"] = this.Wrap(this.Create, USER_ROLE_ADMINISTRATOR)
+	routeMap["/api/user/create"] = this.Wrap(this.Create, USER_ROLE_ADMIN)
 	routeMap["/api/user/edit"] = this.Wrap(this.Edit, USER_ROLE_USER)
 	routeMap["/api/user/change/password"] = this.Wrap(this.ChangePassword, USER_ROLE_USER)
-	routeMap["/api/user/reset/password"] = this.Wrap(this.ResetPassword, USER_ROLE_ADMINISTRATOR)
+	routeMap["/api/user/reset/password"] = this.Wrap(this.ResetPassword, USER_ROLE_ADMIN)
 	routeMap["/api/user/login"] = this.Wrap(this.Login, USER_ROLE_GUEST)
 	routeMap["/api/user/logout"] = this.Wrap(this.Logout, USER_ROLE_USER)
 	routeMap["/api/user/detail"] = this.Wrap(this.Detail, USER_ROLE_USER)
-	routeMap["/api/user/page"] = this.Wrap(this.Page, USER_ROLE_ADMINISTRATOR)
-	routeMap["/api/user/disable"] = this.Wrap(this.Disable, USER_ROLE_ADMINISTRATOR)
-	routeMap["/api/user/enable"] = this.Wrap(this.Enable, USER_ROLE_ADMINISTRATOR)
+	routeMap["/api/user/page"] = this.Wrap(this.Page, USER_ROLE_ADMIN)
+	routeMap["/api/user/disable"] = this.Wrap(this.Disable, USER_ROLE_ADMIN)
+	routeMap["/api/user/enable"] = this.Wrap(this.Enable, USER_ROLE_ADMIN)
 
 	return routeMap
 }
@@ -329,7 +329,7 @@ func (this *UserController) ResetPassword(writer http.ResponseWriter, request *h
 
 	currentUser := this.checkUser(writer, request)
 
-	if currentUser.Role != USER_ROLE_ADMINISTRATOR {
+	if currentUser.Role != USER_ROLE_ADMIN {
 		return this.Error(RESULT_CODE_UNAUTHORIZED)
 	}
 

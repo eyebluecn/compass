@@ -54,7 +54,7 @@ func (this *TankController) RegisterRoutes() map[string]func(writer http.Respons
 	routeMap := make(map[string]func(writer http.ResponseWriter, request *http.Request))
 
 	//每个Controller需要主动注册自己的路由。
-	routeMap["/api/tank/edit"] = this.Wrap(this.Edit, USER_ROLE_ADMINISTRATOR)
+	routeMap["/api/tank/edit"] = this.Wrap(this.Edit, USER_ROLE_ADMIN)
 	routeMap["/api/tank/detail"] = this.Wrap(this.Detail, USER_ROLE_USER)
 	//获取上传token.
 	routeMap["/api/tank/fetch/upload/token"] = this.Wrap(this.FetchUploadToken, USER_ROLE_USER)

@@ -88,7 +88,7 @@ func InstallDatabase() {
 		user.ModifyTime = time.Now()
 		user.LastTime = time.Now()
 		user.Sort = time.Now().UnixNano() / 1e6
-		user.Role = USER_ROLE_ADMINISTRATOR
+		user.Role = USER_ROLE_ADMIN
 		user.Username = CONFIG.AdminUsername
 		user.Password = GetBcrypt(CONFIG.AdminPassword)
 		user.Email = CONFIG.AdminEmail

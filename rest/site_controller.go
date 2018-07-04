@@ -82,7 +82,7 @@ func (this *SiteController) Delete(writer http.ResponseWriter, request *http.Req
 
 	//判断文件的所属人是否正确
 	user := this.checkUser(writer, request)
-	if user.Role != USER_ROLE_ADMINISTRATOR && site.UserUuid != user.Uuid {
+	if user.Role != USER_ROLE_ADMIN && site.UserUuid != user.Uuid {
 		return this.Error(RESULT_CODE_UNAUTHORIZED)
 	}
 

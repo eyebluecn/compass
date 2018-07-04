@@ -66,7 +66,7 @@ func (this *BaseController) Wrap(f func(writer http.ResponseWriter, request *htt
 				//判断用户是否被禁用。
 				webResult = ConstWebResult(RESULT_CODE_LOGIN_INVALID)
 			} else {
-				if qualifiedRole == USER_ROLE_ADMINISTRATOR && user.Role != USER_ROLE_ADMINISTRATOR {
+				if qualifiedRole == USER_ROLE_ADMIN && user.Role != USER_ROLE_ADMIN {
 					webResult = ConstWebResult(RESULT_CODE_UNAUTHORIZED)
 				} else {
 					webResult = f(writer, request)

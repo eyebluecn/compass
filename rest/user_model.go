@@ -10,7 +10,7 @@ const (
 	//普通注册用户
 	USER_ROLE_USER = "USER"
 	//管理员
-	USER_ROLE_ADMINISTRATOR = "ADMINISTRATOR"
+	USER_ROLE_ADMIN = "ADMIN"
 )
 
 const (
@@ -57,7 +57,7 @@ func GetGender(genderString string) string {
 
 //通过一个字符串获取角色
 func GetRole(roleString string) string {
-	if roleString == USER_ROLE_USER || roleString == USER_ROLE_ADMINISTRATOR {
+	if roleString == USER_ROLE_USER || roleString == USER_ROLE_ADMIN {
 		return roleString
 	} else {
 		return USER_ROLE_USER
