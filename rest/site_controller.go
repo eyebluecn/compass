@@ -7,6 +7,7 @@ import (
 
 type SiteController struct {
 	BaseController
+	tankDao     *TankDao
 	siteDao     *SiteDao
 	siteService *SiteService
 }
@@ -16,6 +17,11 @@ func (this *SiteController) Init(context *Context) {
 	this.BaseController.Init(context)
 
 	//手动装填本实例的Bean. 这里必须要用中间变量方可。
+	a := context.GetBean(this.tankDao)
+	if a, ok := a.(*TankDao); ok {
+		this.tankDao = a
+	}
+
 	b := context.GetBean(this.siteDao)
 	if b, ok := b.(*SiteDao); ok {
 		this.siteDao = b
@@ -56,13 +62,18 @@ func (this *SiteController) Create(writer http.ResponseWriter, request *http.Req
 		panic(`链接必填`)
 	}
 
+	faviconTankUuid := request.FormValue("faviconTankUuid")
+	faviconUrl := request.FormValue("faviconUrl")
+
 	user := this.checkUser(writer, request)
 
 	site := &Site{
-		UserUuid: user.Uuid,
-		Name:     name,
-		Url:      url,
-		Visible:  true,
+		UserUuid:        user.Uuid,
+		Name:            name,
+		Url:             url,
+		FaviconTankUuid: faviconTankUuid,
+		FaviconUrl:      faviconUrl,
+		Visible:         true,
 	}
 
 	site = this.siteDao.Create(site)
@@ -106,10 +117,15 @@ func (this *SiteController) Edit(writer http.ResponseWriter, request *http.Reque
 		panic(`链接必填`)
 	}
 
+	faviconTankUuid := request.FormValue("faviconTankUuid")
+	faviconUrl := request.FormValue("faviconUrl")
+
 	site := this.siteDao.CheckByUuid(uuid)
 
 	site.Name = name
 	site.Url = url
+	site.FaviconTankUuid = faviconTankUuid
+	site.FaviconUrl = faviconUrl
 
 	site = this.siteDao.Save(site)
 
@@ -125,8 +141,10 @@ func (this *SiteController) Detail(writer http.ResponseWriter, request *http.Req
 	}
 
 	site := this.siteDao.CheckByUuid(uuid)
+	site.Favicon = this.tankDao.FindByUuid(site.FaviconTankUuid)
 
 	return this.Success(site)
+
 
 }
 

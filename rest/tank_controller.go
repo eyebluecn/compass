@@ -58,6 +58,7 @@ func (this *TankController) RegisterRoutes() map[string]func(writer http.Respons
 	routeMap["/api/tank/detail"] = this.Wrap(this.Detail, USER_ROLE_USER)
 	//获取上传token.
 	routeMap["/api/tank/fetch/upload/token"] = this.Wrap(this.FetchUploadToken, USER_ROLE_USER)
+	routeMap["/api/tank/confirm"] = this.Wrap(this.Confirm, USER_ROLE_USER)
 
 	return routeMap
 }

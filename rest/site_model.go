@@ -9,7 +9,7 @@ type Site struct {
 	Url             string `json:"url"`
 	Hit             int64  `json:"hit"`
 	Visible         bool   `json:"visible"`
-	FaviconTank     *Tank  `gorm:"-" json:"faviconTank"`
+	Favicon         *Tank  `gorm:"-" json:"favicon"`
 }
 
 // set Site's table name
