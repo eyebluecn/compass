@@ -44,7 +44,7 @@ func (this *SiteController) RegisterRoutes() map[string]func(writer http.Respons
 	routeMap["/api/site/delete"] = this.Wrap(this.Delete, USER_ROLE_USER)
 	routeMap["/api/site/edit"] = this.Wrap(this.Edit, USER_ROLE_USER)
 	routeMap["/api/site/detail"] = this.Wrap(this.Detail, USER_ROLE_USER)
-	routeMap["/api/site/page"] = this.Wrap(this.Page, USER_ROLE_USER)
+	routeMap["/api/site/page"] = this.Wrap(this.Page, USER_ROLE_GUEST)
 
 	return routeMap
 }
